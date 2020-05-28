@@ -141,7 +141,7 @@ export default {
     // 加载更多数据
     loadMoreGoods(){
       this.getHomeGoods(this.currentType)
-      this.$refs.scroll.reflesh()
+      this.$refs.scroll.refresh()
     }
   },
   //生命周期 - 创建完成（可以访问当前this实例）
