@@ -59,19 +59,25 @@
           this.$emit('scroll',position)
         })
 
-        // 监听底部上拉
-        this.scroll.on('pullingUp',()=>{
-          this.$emit('pullingUp')
-        })
+        // 监听底部上拉;下拉到底部时调用
+        if(this.pullUpLoad){
+          this.scroll.on('pullingUp',()=>{
+            this.$emit('pullingUp')
+          })
+        }
       },
       scrollTo(x,y,time=300){
-        this.scroll.scrollTo(x,y,time)
+        this.scroll && this.scroll.scrollTo(x,y,time)
       },
       finishPullUp(){
-        this.scroll.finishPullUp()
+        this.scroll && this.scroll.finishPullUp()
       },
       refresh(){
-        this.scroll.refresh()
+        this.scroll && this.scroll.refresh()
+        console.log('better-scroll刷新');      
+      },
+      getCurrentY(){
+        return this.scroll.y;
       }
     },
   }

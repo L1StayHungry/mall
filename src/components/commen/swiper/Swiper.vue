@@ -66,7 +66,7 @@ export default {
   methods: {
     // 定时器
     startTimer() {
-      this.playTimer = window.setInterval(() => {
+      this.playTimer = setInterval(() => {
         this.currentIndex++;
         this.scrollContent(-this.currentIndex * this.totalWidth);
       }, this.interval);
@@ -221,7 +221,7 @@ export default {
       this.handleDom();
       // 开启定时器
       this.startTimer();
-    }, 1);
+    }, 100);
   },
 };
 </script>

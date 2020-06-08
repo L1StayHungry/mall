@@ -1,7 +1,7 @@
 <!-- 商品详情 -->
 <template>
   <div class="goods-item" @click="goToDetail">
-    <img :src="goodsItem.show.img" alt="商品图片">
+    <img v-lazy="showImage" alt="商品图片">
     <div class="goods-info">
       <p>{{goodsItem.title}}</p>
       <span class="price">￥{{goodsItem.price}}</span>
@@ -33,7 +33,11 @@
       };
     },
     //监听属性 类似于data概念
-  computed: {},
+  computed: {
+    showImage(){
+      return this.goodsItem.image || this.goodsItem.show.img
+    }
+  },
   //监控data中的数据变化
     watch: {},
 //方法集合
@@ -43,7 +47,20 @@
         let iid = this.goodsItem.iid;
 
         // 2.跳转到详情页面
-        this.$router.push({path: '/detail', query: {iid}})
+        this.$router.push(
+          {
+            path: '/detail/'+iid
+          }
+        )
+      },
+      imageLoad(){
+        if(this.$route.path.includes('/home')){
+          console.log('homeItemImageLoad');
+          this.$bus.$emit('homeItemImageLoad')  
+        }else if(this.$route.path.includes('/detail')){
+          console.log('detailItemImageLoad');
+          this.$bus.$emit('detailItemImageLoad')
+        }
       }
     },
     //生命周期 - 创建完成（可以访问当前this实例）
@@ -52,7 +69,7 @@
     },
     //生命周期 - 挂载完成（可以访问DOM元素）
     mounted() {
-
+      this.imageLoad();
     },
     beforeCreate() {}, //生命周期 - 创建之前
     beforeMount() {}, //生命周期 - 挂载之前
@@ -118,6 +135,6 @@
     top: 0;
     width: 14px;
     height: 14px;
-    background: url("~assets/img/common/collect.svg") 0 0/14px 14px;
+    background: url("~@/assets/img/common/collect.svg") 0 0/14px 14px;
   }
 </style>

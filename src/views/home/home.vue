@@ -22,6 +22,7 @@
       <feature-view></feature-view>
       <!--  -->
       <tab-control 
+        ref="tabControl"
         :titles="['流行', '新款', '精选']"
         class="tab-control"
         @itemClick="tabClick"
@@ -49,7 +50,9 @@ import HomeSwiper from "@/views/home/childComps/homeSwiper"
 import HomeRecommendView from "@/views/home/childComps/homeRecommendView"
 import FeatureView from "@/views/home/childComps/featureView"
 
+import {backTopMixin} from "@/common/mixin";
 import { getHomeMultidata,getHomeGoods } from "@/network/home.js";
+import { debounce } from "@/components/commen/utils/debounce"
 // import { getHomeGoods } from "@/network/home.js";
 
 export default {
@@ -77,9 +80,12 @@ export default {
         'sell':{page:0,list:[]},
       },
       currentType:'pop',
-      isShowBackTop:false,//返回顶部按钮
+      // isShowBackTop:false,//返回顶部按钮
+      // tabOffsetTop:0,//判断tabControl是否吸顶
+      saveY:0,
     };
   },
+  mixins:[backTopMixin],
   //监听属性 类似于data概念
   computed: {
     showGoods(){
@@ -126,23 +132,17 @@ export default {
           this.currentType = 'sell'
           break
       }
+    },   
+    // 加载更多数据
+    loadMoreGoods(){
+      this.getHomeGoods(this.currentType)
     },
-    backClick(){
-      // 返回顶部
-      // 获取组件this.$refs.scroll
-      // (x,y,缓存时间)
-      this.$refs.scroll.scrollTo(0,0,500)
-    },    
+     
     contentScroll(position){
       // betterScroll发生滚动的回调数据
       // 根据滚动的位置决定“返回顶部”按钮是否显示
       this.isShowBackTop = (-position.y)>1000    
     },
-    // 加载更多数据
-    loadMoreGoods(){
-      this.getHomeGoods(this.currentType)
-      this.$refs.scroll.refresh()
-    }
   },
   //生命周期 - 创建完成（可以访问当前this实例）
   created() {
@@ -152,6 +152,30 @@ export default {
     this.getHomeGoods('pop')
     this.getHomeGoods('new')
     this.getHomeGoods('sell')
+
+  },
+  mounted() {
+    // 图片加载完成的事件监听
+    const refresh = debounce(this.$refs.scroll.refresh,500)   
+    this.$bus.$on('homeItemImageLoad',() =>{
+      // 解决better-scroll的bug
+      refresh()
+    })
+
+    // 获取tabControl的offsetTop
+    // 组件元素$el用于获取组件中的元素
+    // this.tabOffsetTop=this.$refs.tabControl.$el.offsetTop
+  },
+  activated() {
+    console.log('activeted----Y:'+this.saveY);
+    
+    this.$refs.scroll.scrollTo(0,this.saveY,0)
+    // this.$refs.scroll.refresh()
+  },
+  deactivated() {
+    this.saveY=this.$refs.scroll.getCurrentY()
+    console.log(this.saveY);
+    
   },
 };
 </script>
@@ -174,13 +198,13 @@ export default {
   z-index: 10;
 }
 
-.tab-control{
-  /* 粘性定位 */
+/* .tab-control{
+  粘性定位
   position:sticky;
   top:44px;
   background-color: #fff;
   z-index: 10;
-}
+} */
 
 .content{
   position: absolute;
