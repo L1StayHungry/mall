@@ -18,7 +18,9 @@
       probeType: {
         type: Number,
         // 0和1不侦测,2侦测手指位置，3滚动过程都侦测
-        default: 1
+        default: 1,
+        // 如果是网页端，将mouseWheel改成true,移动端则保持默认false
+        mouseWheel: false,
       },
       data: {
 		    type: Array,
@@ -50,6 +52,7 @@
         if(!this.$refs.wrapper) return
         this.scroll = new BScroll(this.$refs.wrapper,{
           click:true,
+          mouseWheel: true,
           probeType:this.probeType,
           pullUpLoad:this.pullUpLoad,
         })

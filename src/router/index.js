@@ -3,7 +3,7 @@ import VueRouter from 'vue-router'
 
 // 懒加载
 const Home = () => import('@/views/home/home.vue')
-const Cart = () => import('@/views/cart/Cart')
+const Cart = () => import('@/views/cart/cart')
 const Category = () => import('@/views/category/category')
 const Profile = () => import('@/views/profile/profile')
 const Detail = () => import('@/views/details/detail')
